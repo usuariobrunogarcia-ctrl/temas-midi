@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Danza Húngara N.º 5 en colores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: banner del acorde arriba, teclado con notas que caen en el centro, controles abajo.
+   Colores: cada nota del acorde tiene un color fijo (fundamental / tercera / quinta). */
+:root{
+  --bg:#f3f1f6; --panel:#ffffff; --fg:#1d1a26; --muted:#6a6577; --line:#d9d5e3;
+  --root:#e8462f; --third:#1f7ae0; --fifth:#12a06b; --pass:#8d879c;
+  --key-w:#fbfaff; --key-b:#25212e; --stage:#e7e3ef; --grid:#d3cee0;
+  --font-display:'Bricolage Grotesque','Trebuchet MS',system-ui,sans-serif;
+  --font-body:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#15121c; --panel:#1f1b29; --fg:#f1eef8; --muted:#a19bb2; --line:#332e42;
+  --root:#ff6a4d; --third:#4aa3ff; --fifth:#3fd39a; --pass:#7d7790;
+  --key-w:#e9e6f2; --key-b:#0f0d14; --stage:#191522; --grid:#2a2537; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#15121c; --panel:#1f1b29; --fg:#f1eef8; --muted:#a19bb2; --line:#332e42;
+  --root:#ff6a4d; --third:#4aa3ff; --fifth:#3fd39a; --pass:#7d7790;
+  --key-w:#e9e6f2; --key-b:#0f0d14; --stage:#191522; --grid:#2a2537; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);padding-inline:16px}
+*{box-sizing:border-box}
+.wrap{max-width:900px;margin:0 auto;padding-block:20px 32px;display:flex;flex-direction:column;gap:16px}
+h1{font-family:var(--font-display);font-weight:800;font-size:clamp(1.3rem,4vw,1.8rem);margin:0;letter-spacing:-.01em;text-wrap:balance}
+.sub{margin:4px 0 0;color:var(--muted);font-size:.95rem;max-width:65ch}
+.banner{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-wrap:wrap;gap:14px 24px;align-items:center}
+.chord-name{font-family:var(--font-display);font-weight:800;font-size:clamp(2rem,8vw,3.2rem);line-height:1;min-width:6.5ch}
+.chord-name small{display:block;font-family:var(--font-body);font-weight:600;font-size:.8rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.tones{display:flex;gap:10px;flex-wrap:wrap}
+.tone{min-width:92px;border-radius:10px;padding:8px 12px;color:#fff;display:flex;flex-direction:column;gap:2px}
+.tone b{font-family:var(--font-display);font-size:1.5rem;line-height:1.1}
+.tone span{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;opacity:.92}
+.tone.r{background:var(--root)}.tone.t{background:var(--third)}.tone.f{background:var(--fifth)}
+.next{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-left:auto;color:var(--muted);font-size:.8rem}
+.next span.c{font-family:var(--font-display);font-weight:600;font-size:1rem;color:var(--fg);padding:3px 9px;border:1px solid var(--line);border-radius:8px}
+.stage{background:var(--stage);border:1px solid var(--line);border-radius:14px;overflow:hidden;line-height:0}
+canvas{width:100%;height:auto;display:block}
+.controls{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+button,select{font:inherit;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 14px;cursor:pointer}
+button.main{background:var(--fg);color:var(--bg);border-color:var(--fg);font-weight:600;min-width:104px}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--third);outline-offset:2px}
+.seek{flex:1 1 220px;min-width:0;accent-color:var(--third)}
+.time{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.9rem;min-width:5.5ch}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;color:var(--muted);font-size:.9rem}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.help{color:var(--muted);font-size:.9rem;max-width:70ch;margin:0}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+<style>html,body{margin:0}</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <h1>Danza Húngara N.º 5</h1>
+    <p class="sub">Versión fácil en sol menor. La mano izquierda toca cada acorde de abajo hacia arriba y la derecha lleva la melodía.</p>
+  </header>
+
+  <section class="banner" aria-live="polite">
+    <div class="chord-name"><small>Suena</small><span id="chordName">–</span></div>
+    <div class="tones">
+      <div class="tone r"><b id="nRoot">–</b><span>Baja · fundamental</span></div>
+      <div class="tone t"><b id="nThird">–</b><span>Enmedio · tercera</span></div>
+      <div class="tone f"><b id="nFifth">–</b><span>Alta · quinta</span></div>
+    </div>
+    <div class="next" id="next"></div>
+  </section>
+
+  <div class="stage"><canvas id="cv" width="900" height="560" aria-label="Teclado con notas que caen"></canvas></div>
+
+  <div class="controls">
+    <button class="main" id="play" type="button">▶ Tocar</button>
+    <button id="restart" type="button">Reiniciar</button>
+    <label>Velocidad
+      <select id="speed">
+        <option value="0.5">50%</option><option value="0.75" selected>75%</option>
+        <option value="1">100%</option>
+      </select>
+    </label>
+    <label class="sr"><input id="mute" type="checkbox"> Sin sonido</label>
+    <input class="seek" id="seek" type="range" min="0" max="1000" value="0" aria-label="Posición">
+    <span class="time" id="time">0:00</span>
+  </div>
+
+  <div class="legend">
+    <span><i style="background:var(--root)"></i>Nota baja del acorde (fundamental)</span>
+    <span><i style="background:var(--third)"></i>Nota enmedio (tercera)</span>
+    <span><i style="background:var(--fifth)"></i>Nota alta (quinta)</span>
+    <span><i style="background:var(--pass)"></i>Nota de paso, no está en el acorde</span>
+  </div>
+  <p class="help">Cuando una nota de la mano derecha tiene el color de una nota del acorde, es la misma nota. Buscá esa tecla en la izquierda para sentir cómo se apoya la melodía. La línea punteada separa las dos manos: la derecha nunca baja de ese límite.</p>
+</div>
+
+<script>
+const D={"rh":[[0.0,0.639,62,0],[0.643,0.214,67,0],[0.857,0.639,70,1],[1.5,0.214,67,1],[1.714,0.639,66,2],[2.571,0.854,67,3],[3.429,0.639,63,4],[4.286,0.854,62,5],[5.571,0.318,69,6],[6.0,0.854,67,7],[6.857,0.639,62,8],[7.714,0.639,74,9],[8.357,0.214,70,9],[8.571,0.639,69,10],[9.429,0.854,70,11],[12.429,0.318,69,14],[12.857,0.425,67,15],[13.714,0.639,62,16],[14.357,0.214,67,16],[14.571,0.639,70,17],[15.214,0.214,67,17],[15.429,0.639,66,18],[16.286,0.854,67,19],[17.143,0.639,63,20],[18.0,0.854,62,21],[19.286,0.318,69,22],[19.714,0.854,67,23],[20.571,0.318,62,24],[21.429,0.639,74,25],[22.071,0.214,70,25],[22.286,0.639,69,26],[23.143,0.854,70,27],[26.143,0.318,69,30],[26.571,0.425,67,31],[27.429,0.279,74,32],[27.857,0.279,74,32],[28.286,0.639,75,33],[29.357,0.425,72,34],[30.429,0.214,72,35],[30.857,0.279,72,36],[31.286,0.279,72,36],[31.714,0.639,74,37],[32.357,0.318,72,37],[32.786,0.429,70,38],[33.857,0.214,70,39],[34.286,0.36,69,40],[34.766,0.36,69,40],[35.486,0.36,70,41],[35.966,0.476,69,41],[36.446,0.476,67,42],[37.646,0.476,67,43],[40.054,0.425,67,46],[41.554,0.279,74,48],[41.983,0.279,74,48],[42.411,0.639,75,49],[43.483,0.425,72,50],[44.554,0.214,72,51],[44.983,0.279,72,52],[45.411,0.279,72,52],[45.84,0.639,74,53],[46.483,0.318,72,53],[46.911,0.429,70,54],[47.983,0.214,70,55],[48.411,0.36,69,56],[48.891,0.36,69,56],[49.611,0.36,70,57],[50.091,0.476,69,57],[50.571,0.476,67,58],[51.771,0.476,67,59],[54.18,0.425,67,62],[55.68,0.214,79,64],[55.894,0.214,74,64],[56.537,0.214,74,65],[56.751,0.214,72,65],[56.966,0.214,71,65],[57.18,0.214,72,65],[57.394,0.425,74,66],[57.823,0.425,74,66],[58.251,0.214,79,67],[58.466,0.214,74,67],[59.109,0.214,74,68],[59.323,0.214,72,68],[59.537,0.214,71,68],[59.751,0.214,69,68],[59.966,0.425,67,69],[60.394,0.425,67,69],[65.966,0.692,71,76],[66.663,0.692,72,76],[67.361,0.692,71,77],[68.059,0.692,69,77],[69.613,0.214,74,79],[69.828,0.214,79,79],[70.042,0.425,74,79],[70.471,0.692,71,80],[71.168,0.692,72,80],[71.866,0.692,74,81],[72.564,0.692,74,81],[74.118,0.214,67,83],[74.333,0.214,79,83],[74.547,0.214,67,83],[74.976,0.692,71,84],[75.673,0.692,72,84],[76.371,0.692,71,85],[77.069,0.692,69,85],[78.623,0.214,74,87],[78.838,0.214,79,87],[79.052,0.425,74,87],[79.481,0.708,71,88],[80.195,0.708,72,88],[80.909,0.708,74,89],[81.623,0.708,74,89],[83.195,0.214,67,91],[83.409,0.214,79,91],[83.623,0.214,67,91],[84.052,0.639,62,92],[84.695,0.214,67,92],[84.909,0.639,70,93],[85.552,0.214,67,93],[85.766,0.639,66,94],[86.623,0.854,67,95],[87.481,0.639,63,96],[88.338,0.854,62,97],[89.623,0.321,69,98],[90.052,0.854,67,99],[96.481,0.318,69,106],[96.909,0.425,67,107],[97.338,0.214,79,107],[104.623,0.36,69,116],[105.103,0.36,69,116],[105.823,0.36,70,117],[106.303,0.476,69,117],[106.783,0.476,67,118],[107.983,0.476,67,119],[110.392,0.425,67,122],[111.892,0.214,79,124],[112.321,0.214,78,124],[112.749,0.857,79,125]],"lh":[[0.0,0.271,43],[0.286,0.271,46],[0.571,0.271,50],[0.857,0.271,43],[1.143,0.271,46],[1.429,0.271,50],[1.714,0.271,48],[2.0,0.271,51],[2.286,0.271,55],[2.571,0.271,43],[2.857,0.271,46],[3.143,0.271,50],[3.429,0.271,48],[3.714,0.271,51],[4.0,0.271,55],[4.286,0.271,43],[4.571,0.271,46],[4.857,0.271,50],[5.143,0.271,50],[5.429,0.271,54],[5.714,0.271,57],[6.0,0.271,43],[6.286,0.271,46],[6.571,0.271,50],[6.857,0.271,43],[7.143,0.271,46],[7.429,0.271,50],[7.714,0.271,43],[8.0,0.271,46],[8.286,0.271,50],[8.571,0.271,41],[8.857,0.271,45],[9.143,0.271,48],[9.429,0.271,43],[9.714,0.271,46],[10.0,0.271,50],[10.286,0.271,43],[10.571,0.271,46],[10.857,0.271,50],[11.143,0.271,51],[11.429,0.271,55],[11.714,0.271,58],[12.0,0.271,50],[12.286,0.271,54],[12.571,0.271,57],[12.857,0.271,43],[13.143,0.271,46],[13.429,0.271,50],[13.714,0.271,43],[14.0,0.271,46],[14.286,0.271,50],[14.571,0.271,43],[14.857,0.271,46],[15.143,0.271,50],[15.429,0.271,48],[15.714,0.271,51],[16.0,0.271,55],[16.286,0.271,43],[16.571,0.271,46],[16.857,0.271,50],[17.143,0.271,48],[17.429,0.271,51],[17.714,0.271,55],[18.0,0.271,43],[18.286,0.271,46],[18.571,0.271,50],[18.857,0.271,50],[19.143,0.271,54],[19.429,0.271,57],[19.714,0.271,43],[20.0,0.271,46],[20.286,0.271,50],[20.571,0.271,43],[20.857,0.271,46],[21.143,0.271,50],[21.429,0.271,43],[21.714,0.271,46],[22.0,0.271,50],[22.286,0.271,41],[22.571,0.271,45],[22.857,0.271,48],[23.143,0.271,43],[23.429,0.271,46],[23.714,0.271,50],[24.0,0.271,51],[24.286,0.271,55],[24.571,0.271,58],[24.857,0.271,43],[25.143,0.271,46],[25.429,0.271,50],[25.714,0.271,50],[26.0,0.271,54],[26.286,0.271,57],[26.571,0.271,43],[26.857,0.271,46],[27.143,0.271,50],[27.429,0.271,43],[27.714,0.271,47],[28.0,0.271,50],[28.286,0.271,48],[28.571,0.271,51],[28.857,0.271,55],[29.143,0.271,48],[29.429,0.271,51],[29.714,0.271,55],[30.0,0.271,48],[30.286,0.271,51],[30.571,0.271,55],[30.857,0.271,41],[31.143,0.271,45],[31.429,0.271,48],[31.714,0.271,50],[32.0,0.271,53],[32.286,0.271,57],[32.571,0.271,46],[32.857,0.271,50],[33.143,0.271,53],[33.429,0.271,46],[33.714,0.271,50],[34.0,0.271,53],[34.286,0.304,50],[34.606,0.304,54],[34.926,0.304,57],[35.246,0.304,50],[35.566,0.304,54],[35.886,0.304,57],[36.206,0.304,51],[36.526,0.304,55],[36.846,0.304,58],[37.166,0.304,51],[37.486,0.304,55],[37.806,0.304,58],[38.126,0.271,50],[38.411,0.271,54],[38.697,0.271,57],[38.983,0.271,52],[39.269,0.271,56],[39.554,0.271,59],[39.84,0.271,43],[40.126,0.271,46],[40.411,0.271,50],[40.697,0.271,48],[40.983,0.271,51],[41.269,0.271,55],[41.554,0.271,43],[41.84,0.271,47],[42.126,0.271,50],[42.411,0.271,48],[42.697,0.271,51],[42.983,0.271,55],[43.269,0.271,48],[43.554,0.271,51],[43.84,0.271,55],[44.126,0.271,48],[44.411,0.271,51],[44.697,0.271,55],[44.983,0.271,41],[45.269,0.271,45],[45.554,0.271,48],[45.84,0.271,50],[46.126,0.271,53],[46.411,0.271,57],[46.697,0.271,46],[46.983,0.271,50],[47.269,0.271,53],[47.554,0.271,46],[47.84,0.271,50],[48.126,0.271,53],[48.411,0.304,50],[48.731,0.304,54],[49.051,0.304,57],[49.371,0.304,50],[49.691,0.304,54],[50.011,0.304,57],[50.331,0.304,51],[50.651,0.304,55],[50.971,0.304,58],[51.291,0.304,51],[51.611,0.304,55],[51.931,0.304,58],[52.251,0.271,50],[52.537,0.271,54],[52.823,0.271,57],[53.109,0.271,52],[53.394,0.271,56],[53.68,0.271,59],[53.966,0.271,43],[54.251,0.271,46],[54.537,0.271,50],[54.823,0.271,48],[55.109,0.271,51],[55.394,0.271,55],[55.68,0.271,43],[55.966,0.271,47],[56.251,0.271,50],[56.537,0.271,43],[56.823,0.271,47],[57.109,0.271,50],[57.394,0.271,43],[57.68,0.271,47],[57.966,0.271,50],[58.251,0.271,43],[58.537,0.271,47],[58.823,0.271,50],[59.109,0.271,43],[59.394,0.271,47],[59.68,0.271,50],[59.966,0.271,43],[60.251,0.271,47],[60.537,0.271,50],[60.823,0.271,43],[61.109,0.271,47],[61.394,0.271,50],[61.68,0.271,43],[61.966,0.271,47],[62.251,0.271,50],[62.537,0.271,43],[62.823,0.271,47],[63.109,0.271,50],[63.394,0.271,43],[63.68,0.271,47],[63.966,0.271,50],[64.251,0.271,43],[64.537,0.271,47],[64.823,0.271,50],[65.109,0.271,43],[65.394,0.271,47],[65.68,0.271,50],[65.966,0.442,43],[66.431,0.442,47],[66.896,0.442,50],[67.361,0.442,43],[67.826,0.442,47],[68.291,0.442,50],[68.756,0.271,48],[69.042,0.271,52],[69.328,0.271,55],[69.613,0.271,43],[69.899,0.271,47],[70.185,0.271,50],[70.471,0.442,43],[70.936,0.442,47],[71.401,0.442,50],[71.866,0.442,43],[72.331,0.442,47],[72.796,0.442,50],[73.261,0.271,43],[73.547,0.271,47],[73.833,0.271,50],[74.118,0.271,43],[74.404,0.271,47],[74.69,0.271,50],[74.976,0.442,43],[75.441,0.442,47],[75.906,0.442,50],[76.371,0.442,43],[76.836,0.442,47],[77.301,0.442,50],[77.766,0.271,48],[78.052,0.271,52],[78.338,0.271,55],[78.623,0.271,43],[78.909,0.271,47],[79.195,0.271,50],[79.481,0.452,43],[79.957,0.452,47],[80.433,0.452,50],[80.909,0.452,43],[81.385,0.452,47],[81.862,0.452,50],[82.338,0.271,43],[82.623,0.271,47],[82.909,0.271,50],[83.195,0.271,43],[83.481,0.271,47],[83.766,0.271,50],[84.052,0.271,43],[84.338,0.271,46],[84.623,0.271,50],[84.909,0.271,43],[85.195,0.271,46],[85.481,0.271,50],[85.766,0.271,48],[86.052,0.271,51],[86.338,0.271,55],[86.623,0.271,43],[86.909,0.271,46],[87.195,0.271,50],[87.481,0.271,48],[87.766,0.271,51],[88.052,0.271,55],[88.338,0.271,43],[88.623,0.271,46],[88.909,0.271,50],[89.195,0.271,50],[89.481,0.271,54],[89.766,0.271,57],[90.052,0.271,43],[90.338,0.271,46],[90.623,0.271,50],[90.909,0.271,43],[91.195,0.271,46],[91.481,0.271,50],[91.766,0.271,43],[92.052,0.271,46],[92.338,0.271,50],[92.623,0.271,48],[92.909,0.271,51],[93.195,0.271,55],[93.481,0.271,43],[93.766,0.271,46],[94.052,0.271,50],[94.338,0.271,51],[94.623,0.271,55],[94.909,0.271,58],[95.195,0.271,43],[95.481,0.271,46],[95.766,0.271,50],[96.052,0.271,50],[96.338,0.271,54],[96.623,0.271,57],[96.909,0.271,43],[97.195,0.271,46],[97.481,0.271,50],[97.766,0.271,43],[98.052,0.271,47],[98.338,0.271,50],[98.623,0.271,43],[98.909,0.271,47],[99.195,0.271,50],[99.481,0.271,48],[99.766,0.271,51],[100.052,0.271,55],[100.338,0.271,48],[100.623,0.271,51],[100.909,0.271,55],[101.195,0.271,41],[101.481,0.271,45],[101.766,0.271,48],[102.052,0.271,50],[102.338,0.271,53],[102.623,0.271,57],[102.909,0.271,46],[103.195,0.271,50],[103.481,0.271,53],[103.766,0.271,46],[104.052,0.271,50],[104.338,0.271,53],[104.623,0.304,50],[104.943,0.304,54],[105.263,0.304,57],[105.583,0.304,50],[105.903,0.304,54],[106.223,0.304,57],[106.543,0.304,51],[106.863,0.304,55],[107.183,0.304,58],[107.503,0.304,51],[107.823,0.304,55],[108.143,0.304,58],[108.463,0.271,50],[108.749,0.271,54],[109.035,0.271,57],[109.321,0.271,52],[109.606,0.271,56],[109.892,0.271,59],[110.178,0.271,43],[110.463,0.271,46],[110.749,0.271,50],[111.035,0.271,48],[111.321,0.271,51],[111.606,0.271,55],[111.892,0.271,50],[112.178,0.271,54],[112.463,0.271,57],[112.749,0.271,43],[113.035,0.271,46],[113.321,0.271,50],[113.606,0.271,43],[113.892,0.271,46],[114.178,0.271,50]],"chords":[[0.0,7,"m",[43,46,50]],[0.857,7,"m",[43,46,50]],[1.714,0,"m",[48,51,55]],[2.571,7,"m",[43,46,50]],[3.429,0,"m",[48,51,55]],[4.286,7,"m",[43,46,50]],[5.143,2,"",[50,54,57]],[6.0,7,"m",[43,46,50]],[6.857,7,"m",[43,46,50]],[7.714,7,"m",[43,46,50]],[8.571,5,"",[41,45,48]],[9.429,7,"m",[43,46,50]],[10.286,7,"m",[43,46,50]],[11.143,3,"",[51,55,58]],[12.0,2,"",[50,54,57]],[12.857,7,"m",[43,46,50]],[13.714,7,"m",[43,46,50]],[14.571,7,"m",[43,46,50]],[15.429,0,"m",[48,51,55]],[16.286,7,"m",[43,46,50]],[17.143,0,"m",[48,51,55]],[18.0,7,"m",[43,46,50]],[18.857,2,"",[50,54,57]],[19.714,7,"m",[43,46,50]],[20.571,7,"m",[43,46,50]],[21.429,7,"m",[43,46,50]],[22.286,5,"",[41,45,48]],[23.143,7,"m",[43,46,50]],[24.0,3,"",[51,55,58]],[24.857,7,"m",[43,46,50]],[25.714,2,"",[50,54,57]],[26.571,7,"m",[43,46,50]],[27.429,7,"",[43,47,50]],[28.286,0,"m",[48,51,55]],[29.143,0,"m",[48,51,55]],[30.0,0,"m",[48,51,55]],[30.857,5,"",[41,45,48]],[31.714,2,"m",[50,53,57]],[32.571,10,"",[46,50,53]],[33.429,10,"",[46,50,53]],[34.286,2,"",[50,54,57]],[35.246,2,"",[50,54,57]],[36.206,3,"",[51,55,58]],[37.166,3,"",[51,55,58]],[38.126,2,"",[50,54,57]],[38.983,4,"",[52,56,59]],[39.84,7,"m",[43,46,50]],[40.697,0,"m",[48,51,55]],[41.554,7,"",[43,47,50]],[42.411,0,"m",[48,51,55]],[43.269,0,"m",[48,51,55]],[44.126,0,"m",[48,51,55]],[44.983,5,"",[41,45,48]],[45.84,2,"m",[50,53,57]],[46.697,10,"",[46,50,53]],[47.554,10,"",[46,50,53]],[48.411,2,"",[50,54,57]],[49.371,2,"",[50,54,57]],[50.331,3,"",[51,55,58]],[51.291,3,"",[51,55,58]],[52.251,2,"",[50,54,57]],[53.109,4,"",[52,56,59]],[53.966,7,"m",[43,46,50]],[54.823,0,"m",[48,51,55]],[55.68,7,"",[43,47,50]],[56.537,7,"",[43,47,50]],[57.394,7,"",[43,47,50]],[58.251,7,"",[43,47,50]],[59.109,7,"",[43,47,50]],[59.966,7,"",[43,47,50]],[60.823,7,"",[43,47,50]],[61.68,7,"",[43,47,50]],[62.537,7,"",[43,47,50]],[63.394,7,"",[43,47,50]],[64.251,7,"",[43,47,50]],[65.109,7,"",[43,47,50]],[65.966,7,"",[43,47,50]],[67.361,7,"",[43,47,50]],[68.756,0,"",[48,52,55]],[69.613,7,"",[43,47,50]],[70.471,7,"",[43,47,50]],[71.866,7,"",[43,47,50]],[73.261,7,"",[43,47,50]],[74.118,7,"",[43,47,50]],[74.976,7,"",[43,47,50]],[76.371,7,"",[43,47,50]],[77.766,0,"",[48,52,55]],[78.623,7,"",[43,47,50]],[79.481,7,"",[43,47,50]],[80.909,7,"",[43,47,50]],[82.338,7,"",[43,47,50]],[83.195,7,"",[43,47,50]],[84.052,7,"m",[43,46,50]],[84.909,7,"m",[43,46,50]],[85.766,0,"m",[48,51,55]],[86.623,7,"m",[43,46,50]],[87.481,0,"m",[48,51,55]],[88.338,7,"m",[43,46,50]],[89.195,2,"",[50,54,57]],[90.052,7,"m",[43,46,50]],[90.909,7,"m",[43,46,50]],[91.766,7,"m",[43,46,50]],[92.623,0,"m",[48,51,55]],[93.481,7,"m",[43,46,50]],[94.338,3,"",[51,55,58]],[95.195,7,"m",[43,46,50]],[96.052,2,"",[50,54,57]],[96.909,7,"m",[43,46,50]],[97.766,7,"",[43,47,50]],[98.623,7,"",[43,47,50]],[99.481,0,"m",[48,51,55]],[100.338,0,"m",[48,51,55]],[101.195,5,"",[41,45,48]],[102.052,2,"m",[50,53,57]],[102.909,10,"",[46,50,53]],[103.766,10,"",[46,50,53]],[104.623,2,"",[50,54,57]],[105.583,2,"",[50,54,57]],[106.543,3,"",[51,55,58]],[107.503,3,"",[51,55,58]],[108.463,2,"",[50,54,57]],[109.321,4,"",[52,56,59]],[110.178,7,"m",[43,46,50]],[111.035,0,"m",[48,51,55]],[111.892,2,"",[50,54,57]],[112.749,7,"m",[43,46,50]],[113.606,7,"m",[43,46,50]]],"end":114.463};
+const NAMES=['Do','Reb','Re','Mib','Mi','Fa','Solb','Sol','Lab','La','Sib','Si'];
+const N=p=>NAMES[p%12];
+const LO=41,HI=79,SPLIT=60;               // rango del teclado y frontera entre manos
+const isBlack=p=>[1,3,6,8,10].includes(p%12);
+const whites=[];for(let p=LO;p<=HI;p++)if(!isBlack(p))whites.push(p);
+const cv=document.getElementById('cv'),cx=cv.getContext('2d');
+let W,H,KB,KTOP,kw;const LOOK=3.2,keyX={},keyW={};
+function layout(){W=Math.max(320,Math.min(900,Math.round(cv.parentElement.clientWidth||900)));H=Math.round(W*(W<600?.8:.62));cv.width=W;cv.height=H;
+  KB=Math.round(H*.22);KTOP=H-KB;kw=W/whites.length;
+  whites.forEach((p,i)=>{keyX[p]=i*kw;keyW[p]=kw});
+  for(let p=LO;p<=HI;p++)if(isBlack(p)){const l=keyX[p-1];keyX[p]=l+kw*.68;keyW[p]=kw*.64}}
+layout();addEventListener('resize',layout);
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
+let C={};function readC(){C={root:css('--root'),third:css('--third'),fifth:css('--fifth'),pass:css('--pass'),kw:css('--key-w'),kb:css('--key-b'),grid:css('--grid'),fg:css('--fg'),muted:css('--muted')}}
+readC();
+const roleColor=k=>[C.root,C.third,C.fifth][k];
+function chordAt(t){let i=0;const a=D.chords;while(i+1<a.length&&a[i+1][0]<=t)i++;return i}
+function roleOfRH(n){const ch=D.chords[n[3]];if(!ch)return -1;return ch[3].findIndex(x=>x%12===n[2]%12)}
+
+let t=0,playing=false,last=0,speed=.75,ci=-1,iR=0,iL=0,actx=null,gain=null,muted=false;
+function ensureAudio(){if(actx)return;try{actx=new (window.AudioContext||window.webkitAudioContext)();gain=actx.createGain();gain.gain.value=.5;gain.connect(actx.destination)}catch(e){actx=null}}
+function tone(p,dur,vel){if(!actx||muted)return;const f=440*Math.pow(2,(p-69)/12),n=actx.currentTime,o=actx.createOscillator(),g=actx.createGain();
+  o.type='triangle';o.frequency.value=f;const d=Math.max(.12,dur/speed);
+  g.gain.setValueAtTime(0,n);g.gain.linearRampToValueAtTime(vel,n+.01);g.gain.exponentialRampToValueAtTime(.0001,n+d+.15);
+  o.connect(g);g.connect(gain);o.start(n);o.stop(n+d+.2)}
+function seekTo(s){t=Math.max(0,Math.min(D.end,s));iR=D.rh.findIndex(n=>n[0]>=t);if(iR<0)iR=D.rh.length;iL=D.lh.findIndex(n=>n[0]>=t);if(iL<0)iL=D.lh.length;ci=-1}
+function fire(){while(iR<D.rh.length&&D.rh[iR][0]<=t){const n=D.rh[iR++];tone(n[2],n[1],.22)}
+  while(iL<D.lh.length&&D.lh[iL][0]<=t){const n=D.lh[iL++];tone(n[2],n[1]*1.3,.2)}}
+function banner(){const i=chordAt(t);if(i===ci)return;ci=i;const c=D.chords[i];
+  document.getElementById('chordName').textContent=N(c[1])+(c[2]==='m'?' menor':' mayor');
+  document.getElementById('nRoot').textContent=N(c[3][0]);document.getElementById('nThird').textContent=N(c[3][1]);document.getElementById('nFifth').textContent=N(c[3][2]);
+  const nx=[];let last=c[1]+c[2];for(let j=i+1;j<D.chords.length&&nx.length<3;j++){const k=D.chords[j][1]+D.chords[j][2];if(k!==last){nx.push(N(D.chords[j][1])+(D.chords[j][2]==='m'?'m':''));last=k}}
+  document.getElementById('next').innerHTML=nx.length?'Después: '+nx.map(x=>'<span class="c">'+x+'</span>').join(''):''}
+function rr(x,y,w,h,r){cx.beginPath();cx.roundRect?cx.roundRect(x,y,w,h,r):cx.rect(x,y,w,h);cx.fill()}
+function draw(){
+  cx.clearRect(0,0,W,H);
+  const pps=(KTOP-10)/LOOK;
+  cx.strokeStyle=C.grid;cx.lineWidth=1;
+  whites.forEach((p,i)=>{cx.beginPath();cx.moveTo(i*kw,0);cx.lineTo(i*kw,KTOP);cx.stroke()});
+  const sx=keyX[SPLIT];cx.setLineDash([6,6]);cx.strokeStyle=C.muted;cx.beginPath();cx.moveTo(sx,0);cx.lineTo(sx,KTOP);cx.stroke();cx.setLineDash([]);
+  cx.fillStyle=C.muted;cx.font='600 15px Figtree,system-ui,sans-serif';cx.textAlign='right';cx.fillText('Mano izquierda',sx-10,22);cx.textAlign='left';cx.fillText('Mano derecha',sx+10,22);
+  const cur=D.chords[chordAt(t)];const active=new Map();
+  const drawNote=(n,col,lane)=>{const bot=KTOP-(n[0]-t)*pps,top=KTOP-(n[0]+n[1]-t)*pps,h=Math.max(bot-top,10),x=keyX[n[2]],w=keyW[n[2]]-3;
+    if(bot<0||top>KTOP)return;const y=Math.min(bot,KTOP)-h;cx.fillStyle=col;cx.globalAlpha=n[0]<=t&&n[0]+n[1]>=t?1:.92;rr(x+1.5,Math.max(y,0),w,Math.min(h,KTOP-Math.max(y,0)),6);cx.globalAlpha=1;
+    if(n[0]<=t&&n[0]+n[1]>=t)active.set(n[2],col);
+    if(h>20&&w>=20){cx.fillStyle='#fff';cx.font='700 12px Figtree,system-ui,sans-serif';cx.textAlign='center';cx.fillText(N(n[2]),x+1.5+w/2,Math.min(bot,KTOP)-6);cx.textAlign='left'}};
+  for(const n of D.lh){if(n[0]>t+LOOK)break;if(n[0]+n[1]<t-.05)continue;const k=D.chords[chordAt(n[0])][3].indexOf(n[2]);drawNote(n,roleColor(Math.max(k,0)))}
+  for(const n of D.rh){if(n[0]>t+LOOK)break;if(n[0]+n[1]<t-.05)continue;const r=roleOfRH(n);drawNote(n,r>=0?roleColor(r):C.pass)}
+  // teclado
+  for(const p of whites){cx.fillStyle=active.get(p)||C.kw;cx.fillRect(keyX[p]+1,KTOP,kw-2,KB);
+    if(p%12===0||p%12===7){cx.fillStyle=active.has(p)?'#fff':C.muted;cx.font='600 11px Figtree,system-ui,sans-serif';cx.textAlign='center';cx.fillText(N(p),keyX[p]+kw/2,H-8);cx.textAlign='left'}}
+  for(let p=LO;p<=HI;p++)if(isBlack(p)){cx.fillStyle=active.get(p)||C.kb;cx.fillRect(keyX[p],KTOP,keyW[p],KB*.62)}
+  cx.fillStyle=C.fg;cx.globalAlpha=.5;cx.fillRect(0,KTOP-1,W,2);cx.globalAlpha=1;
+}
+const $=id=>document.getElementById(id),seek=$('seek');
+function fmt(s){s=Math.floor(s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function tick(ts){if(playing){const dt=Math.min((ts-last)/1000,.1);last=ts;t+=dt*speed;if(t>=D.end){t=D.end;setPlay(false)}fire()}
+  else last=ts;
+  banner();draw();seek.value=Math.round(t/D.end*1000);$('time').textContent=fmt(t);requestAnimationFrame(tick)}
+function setPlay(v){playing=v;$('play').textContent=v?'⏸ Pausa':'▶ Tocar';if(v){ensureAudio();if(actx&&actx.state==='suspended')actx.resume();if(t>=D.end)seekTo(0)}}
+$('play').onclick=()=>setPlay(!playing);
+$('restart').onclick=()=>{seekTo(0)};
+$('speed').onchange=e=>{speed=parseFloat(e.target.value)};
+$('mute').onchange=e=>{muted=e.target.checked};
+seek.oninput=()=>seekTo(seek.value/1000*D.end);
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>setTimeout(readC,50));
+new MutationObserver(()=>setTimeout(readC,50)).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+addEventListener('keydown',e=>{if(e.code==='Space'&&e.target.tagName!=='SELECT'&&e.target.tagName!=='INPUT'){e.preventDefault();setPlay(!playing)}});
+seekTo(0.0);requestAnimationFrame(tick);
+</script>
+
+</body>
+</html>
